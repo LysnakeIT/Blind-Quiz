@@ -26,7 +26,10 @@
 
 ## Informations générales
 
-* Non compléter
+``` bash
+$ pip install -r requirements.txt
+$ python BlindTest.py
+```
 
 ## Catégories
 
