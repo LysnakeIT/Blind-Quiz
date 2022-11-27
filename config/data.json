@@ -1,0 +1,138 @@
+{
+    "musique": {
+        "questions": [
+            "Quel est le titre de ce morceau ?",
+            "Avec qui Jenifer Lopez interprete-t-elle 'On the floor en duo' ?",
+            "En quelle annee est sortie Chandelier de Sia  ?",
+            "Quel est le titre exact de cette chanson ?",
+            "Qui est l'interprete de cette chanson ?",
+            "De quel album est extrait Bella de Maitre Gims ?",
+            "Avec quel  humoriste Stromae realise la video promotion de 'Alors on Danse'?",
+            "Quel est le titre de ce celebre morceau de Sexion d'Assaut?",
+            "Quel est le nom du groupe qui interprete le tube 'Party Rock Anthem'?",
+            "Quel est le titre de cette musique de Colonel Reyel ?",
+            "De quel album d'Adele ce titre provient-il ?",
+            "Quel est record est detenu par ce titre ?",
+            "Quel est le titre qui a rendu populaire le groupe Daft Punk ?",
+            "De la bande originale de quel film la musique cette musique provient-elle ?"
+        ],
+        "reponsesPossible": [
+            [
+                "To the word",
+                "World",
+                "Burn",
+                "Sky"
+            ],
+            [
+                "Jason Derulo",
+                "Pitbull",
+                "Justin Bieber",
+                "Usher"
+            ],
+            [
+                "2016",
+                "2014",
+                "2012",
+                "2013"
+            ],
+            [
+                "Lefa - Sur ma route",
+                "Je sais pas",
+                "Black M - Sur ma route",
+                "Blac M - Ma roots"
+            ],
+            [
+                "Britney Spears",
+                "Taylor Swift",
+                "Katy Perry",
+                "Elie Goulding"
+            ],
+            [
+                "Subliminal",
+                "Ceinture noire",
+                "L'apogee",
+                "Mon coeur avait raison"
+            ],
+            [
+                "Gad Elmaleh",
+                "Thomas N'Gijol",
+                "Fabrice Eboue",
+                "Jamel Debbouze"
+            ],
+            [
+                "Ok",
+                "Sorry",
+                "Merci",
+                "Desole"
+            ],
+            [
+                "OMG",
+                "LOL",
+                "LMFAO",
+                "GTY"
+            ],
+            [
+                "Lui",
+                "Laisse moi etre celui",
+                "Moi",
+                "Celui"
+            ],
+            [
+                "21",
+                "Someone Like You",
+                "Adele",
+                "Me"
+            ],
+            [
+                "Clip le plus visionne en 24h",
+                "Plus grand nombre de vues pour une chanson francophone",
+                "Chanson la plus populaire de 2013",
+                "Rien"
+            ],
+            [
+                "Unlucky",
+                "Lucky",
+                "Get Lucky",
+                "We're up all night to Get Lucky"
+            ],
+            [
+                "Moi, Moche et Mechant 2",
+                "Raiponce",
+                "Les Minions",
+                "Aucun"
+            ]
+        ],
+        "audio": [
+            "./assets/music/1.wav",
+            "./assets/music/2.wav",
+            "./assets/music/3.wav",
+            "./assets/music/4.wav",
+            "./assets/music/5.wav",
+            "./assets/music/6.wav",
+            "./assets/music/7.wav",
+            "./assets/music/8.wav",
+            "./assets/music/9.wav",
+            "./assets/music/10.wav",
+            "./assets/music/11.wav",
+            "./assets/music/12.wav",
+            "./assets/music/13.wav",
+            "./assets/music/14.wav"
+        ],
+        "reponses": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            0,
+            3,
+            3,
+            2,
+            3,
+            0,
+            1,
+            2,
+            0
+        ]
+    }
+}
