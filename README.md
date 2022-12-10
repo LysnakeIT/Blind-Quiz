@@ -1,12 +1,12 @@
 <h1 align="center">
   <br>
-  <img src="./assets/images/logo.ico" alt="Blind Test" width="200"></a>
+  <img src="./assets/images/logo.ico" alt="Blind Quiz" width="200"></a>
   <br>
-  Blind test
+  Blind Quiz
   <br>
 </h1>
 
-<h4 align="center">Une application de blind test faite en <a href="https://www.python.org/" target="_blank">Python</a>.</h4>
+<h4 align="center">Une application de blind quiz faite en <a href="https://www.python.org/" target="_blank">Python</a>.</h4>
 
 <p align="center">
   <a href="https://code.visualstudio.com/">
