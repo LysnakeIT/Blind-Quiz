@@ -1,5 +1,5 @@
 from launcher import *
-from tkinter import*
+import tkinter as tk
 import random
 import pygame
 import json
@@ -7,223 +7,217 @@ import unidecode
 
 class BlindTest:
 
-	arrayQuestion = [False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-	index = random.randint(0,13)
-	score = 0
-	questionsLength = 1
-	tact = 0
+    def __init__(self):
+        """
+        Constructeur de la classe BlindTest.
+        Initialise les données du jeu et lance l'interface.
+        """
+        pygame.init()
+        self.fichier_config = open('./config/data.json')
+        self.donnees = json.load(self.fichier_config)
+        self.lanceur = Launcher()
+        self.afficher_interface()
 
-	def __init__(self):
+    def afficher_resultat(self, score, label_question, labels_reponses):
+        """
+        Affiche le résultat final du joueur à la fin du jeu.
 
-		pygame.init()
+        Args:
+            score (int): Le score final du joueur.
+            label_question (tk.Label): Le label de la question.
+            labels_reponses (List[tk.Label]): La liste des labels des réponses.
+        """
+        for label in labels_reponses:
+            label.destroy()
 
-		self.fileConfig = open('./config/data.json')
-		self.data = json.load(self.fileConfig)
+        label_question.destroy()
 
-		self.launcher = Launcher()
+        label_score = tk.Label(
+            self.fenetre,
+            font=("Consolas", 30),
+            fg="#333333"
+        )
+        label_score.pack(pady=(300, 90))
+        label_score.configure(text=f"Score: {score}/14!")
 
-		self.display()
+        bouton_recommencer = tk.Button(
+            self.fenetre,
+            text="Essayer une autre catégorie",
+            relief=tk.FLAT,
+            font=("Times", 20),
+            command=lambda: self.lanceur.restart(label_score, bouton_recommencer, self.choisir_categorie),
+            background="#F5F5F5",
+            fg="#333333"
+        )
+        bouton_recommencer.pack()
 
-	def displayResultat(self, score, laQuestion, rep1, rep2, rep3, rep4):
-		laQuestion.destroy()
-		rep1.destroy()
-		rep2.destroy()
-		rep3.destroy()
-		rep4.destroy()
+    def choisir_reponse(self, ret, choix, label_question, labels_reponses):
+        """
+        Vérifie la réponse choisie par le joueur et gère la suite du jeu.
 
-		self.leScore = Label(
-			self.window,
-			font = ("Consolas", 30),
-			fg="#333333")
+        Args:
+            ret (int): L'index de la question en cours.
+            choix (tk.IntVar): La variable du choix de réponse du joueur.
+            label_question (tk.Label): Le label de la question en cours.
+            labels_reponses (List[tk.Label]): La liste des labels des réponses en cours.
+        """
+        index = ret
+        reponse_choisie = choix.get()
+        choix.set(-1)
 
-		self.leScore.pack(pady=(300, 90))
+        if self.longueur_questions > 1 or self.longueur_questions <= 13:
+            if reponse_choisie == self.reponses[self.tact]:
+                self.score += 1
+        else:
+            if reponse_choisie == self.reponses[index]:
+                self.score += 1
 
-		self.leScore.configure(text="Score :"+ str(score) + "/14 !")
+        while self.questions_choisies[index] and self.longueur_questions <= 13:
+            index = random.randint(0, 13)
 
-		self.boutonRestart = Button(
-			self.window,
-			text = "Essayer une autre catégorie",
-			relief = FLAT,
-			font = ("Times", 20),
-			command = lambda : self.launcher.restart(self.leScore, self.boutonRestart, self.choix_categories),
-			background = "#F5F5F5",
-			fg="#333333")
-		self.boutonRestart.pack()
+        if self.longueur_questions <= 13:
+            pygame.mixer.stop()
+            self.son = pygame.mixer.Sound(self.audio[index])
+            self.son.play()
+            label_question.config(text=self.questions[index])
+            for i, label_reponse in enumerate(labels_reponses):
+                label_reponse['text'] = self.choix_reponses[index][i]
+            self.longueur_questions += 1
+            self.questions_choisies[index] = True
+            self.tact = index
+        else:
+            self.son.stop()
+            self.afficher_resultat(self.score, label_question, labels_reponses)
 
+    def debut_blind_test(self):
+        """
+        Démarre le Blind Test avec une nouvelle question.
+        """
+        self.questions_choisies[self.index] = True
 
-	def choice_answer(self, ret, choice, laQuestion, rep1, rep2, rep3, rep4) :
-		index = ret
-		leChoix = choice.get()
-		choice.set(-1)
-		if self.questionsLength > 1 or self.questionsLength <= 13:
-			if (leChoix == self.reponses[self.tact]):
-				self.score = self.score + 1
-		else :
-			if (leChoix == self.reponses[index]):
-				self.score = self.score + 1
+        label_question = tk.Label(
+            self.fenetre,
+            text=self.questions[self.index],
+            font=("Consolas", 20, "bold"),
+            width=500,
+            justify="center",
+            wraplength=600,
+            fg="#333333"
+        )
+        label_question.pack(pady=(100, 80))
 
-		while self.arrayQuestion[index] == True and self.questionsLength <= 13:
-			index = random.randint(0,13)
+        choix = tk.IntVar()
+        choix.set(-1)
 
-		if self.questionsLength <= 13:
-			pygame.mixer.stop()
-			self.son = pygame.mixer.Sound(self.audio[index])
-			self.son.play()
-			laQuestion.config(text= self.questions[index])
-			rep1['text'] = self.choix_reponses[index][0]
-			rep2['text'] = self.choix_reponses[index][1]
-			rep3['text'] = self.choix_reponses[index][2]
-			rep4['text'] = self.choix_reponses[index][3]
-			self.questionsLength += 1
-			self.arrayQuestion[index] = True
-			self.tact = index
-		else:
-			self.son.stop()
-			self.displayResultat(self.score, laQuestion, rep1, rep2, rep3, rep4)
+        labels_reponses = []
 
-	def start_blindtest(self):
-		self.arrayQuestion[self.index] = True
+        for i, reponse in enumerate(self.choix_reponses[self.index]):
+            label_reponse = tk.Radiobutton(
+                self.fenetre,
+                text=reponse,
+                font=("Consolas", 25),
+                value=i,
+                variable=choix,
+                anchor=tk.CENTER,
+                background="#0000FF",
+                foreground="#F5F5F5",
+                relief=tk.RAISED
+            )
+            label_reponse.pack(pady=13)
+            label_reponse.config(
+                command=lambda: self.choisir_reponse(self.index, choix, label_question, labels_reponses)
+            )
+            labels_reponses.append(label_reponse)
 
-		laQuestion = Label(
-			self.window,
-			text = self.questions[self.index],
-			font = ("Consolas", 20, "bold"),
-			width = 500,
-			justify = "center",
-			wraplength = 600,
-			fg="#333333")
+    def lancer_categorie(self, boutons_categories, label_categorie, nom_categorie):
+        """
+        Lance le Blind Test pour une nouvelle catégorie.
 
-		leSon = pygame.mixer.Sound (self.audio[self.index])
-		leSon.play()
-		laQuestion.pack(pady=(100, 80))
+        Args:
+            boutons_categories (List[tk.Button]): La liste des boutons des catégories.
+            label_categorie (tk.Label): Le label indiquant de choisir une catégorie.
+            nom_categorie (str): Le nom de la catégorie choisie.
+        """
+        for bouton in boutons_categories:
+            bouton.destroy()
+        label_categorie.destroy()
 
-		choice = IntVar()
-		choice.set(-1)
+        self.questions_choisies = [False] * 14
+        self.index = random.randint(0, 13)
+        self.score = 0
+        self.longueur_questions = 1
+        self.tact = 0
+        self.questions = self.donnees.get(nom_categorie).get('questions')
+        self.choix_reponses = self.donnees.get(nom_categorie).get('reponsesPossible')
+        self.audio = self.donnees.get(nom_categorie).get("audio")
+        self.reponses = self.donnees.get(nom_categorie).get('reponses')
+        self.debut_blind_test()
 
-		rep1 = Radiobutton(
-			self.window,
-			text = self.choix_reponses[self.index][0],
-			font = ("Consolas", 25),
-			value = 0,
-			variable = choice,
-			anchor=CENTER,
-			background = "#0000FF",
-			foreground = "#F5F5F5",
-			relief= RAISED)
-		rep1.pack(pady=13)
+    def choisir_categorie(self):
+        """
+        Affiche les boutons pour choisir une catégorie.
+        """
+        label_categorie = tk.Label(
+            self.fenetre,
+            text="Choisis une catégorie",
+            font=("Times", "35", "bold italic"),
+            bg="#F5F5F5",
+            foreground="#333333",
+            width=20
+        )
+        label_categorie.pack(pady=70)
 
-		rep2 = Radiobutton(
-			self.window,
-			text = self.choix_reponses[self.index][1],
-			font = ("Consolas", 25),
-			value = 1,
-			variable = choice,
-			anchor=CENTER,
-			background = "#0000FF",
-			foreground = "#F5F5F5",
-			relief= RAISED)
-		rep2.pack(pady=13)
+        categories = ["Musique", "Cinéma", "Séries", "VideoGames"]
+        boutons_categories = []
 
-		rep3 = Radiobutton(
-			self.window,
-			text = self.choix_reponses[self.index][2],
-			font = ("Consolas", 25),
-			value = 2,
-			variable = choice,
-			anchor=CENTER,
-			background = "#0000FF",
-			foreground = "#F5F5F5",
-			relief= RAISED)
-		rep3.pack(pady=13)
+        for i, categorie in enumerate(categories):
+            nom = categorie
+            bouton_categorie = tk.Button(
+                self.fenetre,
+                text=categorie,
+                font=("Broadway 20"),
+                bg="#F5F5F5",
+                foreground="#333333",
+                width=20,
+                height=1,
+                state=tk.DISABLED,
+                command=lambda nom=unidecode.unidecode(nom.lower()): self.lancer_categorie(
+                    boutons_categories, label_categorie, nom
+                )
+            )
+            bouton_categorie.pack(pady=10)
+            boutons_categories.append(bouton_categorie)
 
-		rep4 = Radiobutton(
-			self.window,
-			text = self.choix_reponses[self.index][3],
-			font = ("Consolas", 25),
-			value = 3,
-			variable = choice,
-			anchor=CENTER,
-			background = "#0000FF",
-			foreground = "#F5F5F5",
-			relief= RAISED)
-		rep4.pack(pady=13)
+        boutons_categories[0].place(x=100, y=250)
+        boutons_categories[0].config(state=tk.NORMAL)
+        boutons_categories[1].place(x=675, y=250)
+        boutons_categories[2].place(x=100, y=400)
+        boutons_categories[3].place(x=675, y=400)
 
-		rep1.config(command = lambda : self.choice_answer(self.index, choice, laQuestion, rep1, rep2, rep3, rep4))
-		rep2.config(command = lambda : self.choice_answer(self.index, choice, laQuestion, rep1, rep2, rep3, rep4))
-		rep3.config(command = lambda : self.choice_answer(self.index, choice, laQuestion, rep1, rep2, rep3, rep4))
-		rep4.config(command = lambda : self.choice_answer(self.index, choice, laQuestion, rep1, rep2, rep3, rep4))	
+    def afficher_interface(self):
+        self.fenetre = tk.Tk()
+        self.fenetre.title("Blind Test")
+        self.fenetre.geometry("1200x690")
+        self.fenetre.wm_iconbitmap('./assets/images/logo.ico')
+        self.fenetre.resizable(0, 0)
 
-	def lancer_categorie(self, listeBoutonCategorie, labelCategorie, nomCategorie):
-		for i in listeBoutonCategorie:
-			i.destroy()
-		labelCategorie.destroy()
-		self.arrayQuestion = [False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-		self.index = random.randint(0,13)
-		self.score = 0
-		self.questionsLength = 1
-		self.tact = 0
-		self.questions = self.data.get(nomCategorie).get('questions')
-		self.choix_reponses = self.data.get(nomCategorie).get('reponsesPossible')
-		self.audio = self.data.get(nomCategorie).get("audio")
-		self.reponses = self.data.get(nomCategorie).get('reponses')
-		self.start_blindtest()
+        image_fond = tk.PhotoImage(file='./assets/images/background.png')
+        label_fond = tk.Label(self.fenetre, image=image_fond)
+        label_fond.place(relwidth=1, relheight=1)
 
-	def choix_categories(self):
-		labelCategorie = Label(
-			self.window,
-			text = "Choisis une catégorie",
-			font = ("Times", "35", "bold italic"),
-			bg ="#F5F5F5",
-			foreground = "#333333",
-			width = 20)
-		labelCategorie.pack(pady=70)
+        image_demarrer = tk.PhotoImage(file="./assets/images/bouton_start.png")
 
-		listeCategorie = ["Musique", "Cinéma", "Séries", "VideoGames"]
-		listeBoutonCategorie = []
+        bouton_demarrer = tk.Button(
+            self.fenetre,
+            image=image_demarrer,
+            relief=tk.FLAT,
+            background="#2148c0",
+            border=0
+        )
+        bouton_demarrer.pack(pady=300)
+        bouton_demarrer.config(command=lambda: self.lanceur.lancer_jeu(bouton_demarrer, self.choisir_categorie))
 
-		for i in listeCategorie:
-			name = i
-			i = Button(
-				self.window,
-				text = i,
-				font = ("Broadway 20"),
-				bg ="#F5F5F5",
-				foreground = "#333333",
-				width = 20,
-				height = 1,
-				state = DISABLED,
-				command = lambda name = unidecode.unidecode(name.lower()): self.lancer_categorie(listeBoutonCategorie, labelCategorie, name))
-			i.pack(pady=10)
-			listeBoutonCategorie.append(i)
-		listeBoutonCategorie[0].place(x=100, y=250)
-		listeBoutonCategorie[0].config(state = NORMAL)
-		listeBoutonCategorie[1].place(x=675, y=250)
-		listeBoutonCategorie[2].place(x=100, y=400)
-		listeBoutonCategorie[3].place(x=675, y=400)
+        self.fenetre.mainloop()
+        pygame.quit()
 
-	def display (self):
-		self.window = Tk()
-		self.window.title("Blind Test")
-		self.window.geometry("1200x690")
-		self.window.wm_iconbitmap('./assets/images/logo.ico')
-		self.window.resizable(0,0)
-
-		background_image = PhotoImage(file='./assets/images/background.png')
-		background_label = Label(self.window, image=background_image)
-		background_label.place(relwidth=1, relheight=1)
-
-		imageStart = PhotoImage(file="./assets/images/bouton_start.png")
-
-		boutonStart = Button(
-			self.window,
-			image = imageStart,
-			relief = FLAT,
-			background = "#2148c0",
-			border = 0)
-		boutonStart.pack(pady=300)
-		boutonStart.config(command = lambda : self.launcher.lancer_game(boutonStart, self.choix_categories))
-
-		self.window.mainloop()
-		pygame.quit()
-
-startGame = BlindTest()
+start_game = BlindTest()
