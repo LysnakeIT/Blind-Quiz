@@ -34,9 +34,9 @@ $ python BlindTest.py
 ## Catégories
 
 * Musique
-* Cinéma (pas activé)
-* Séries (pas activé)
-* VideoGames (pas activé)
+* Cinéma (Non implémenté)
+* Séries (Non implémenté)
+* VideoGames (Non implémenté)
 
 ## Images
 
